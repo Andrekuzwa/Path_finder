@@ -49,7 +49,7 @@ while not done:
             # User clicks the mouse. Get the position
             try:
                 pos = event.pos
-                # Change the x/y screen coordinates to grid coordinates
+                # Change the x/y screen coordinates to grid coordinates pjyf
                 column = pos[0] // (WIDTH + MARGIN)
                 row = pos[1] // (HEIGHT + MARGIN)
                 # Set that location to one
