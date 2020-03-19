@@ -7,7 +7,7 @@ WHITE = (255, 255, 255)
 GREEN = (0, 255, 0)
 RED = (255, 0, 0)
 BLUE = (0,0,255)
-SMTH = (100,0,100)
+SMTH = (0,200,200)
 # This sets the WIDTH and HEIGHT of each grid location
 WIDTH = 12
 HEIGHT = 12
@@ -49,6 +49,8 @@ clock = pygame.time.Clock()
 
 start_test = (1,1)
 end_test = (45,45)
+grid[start_test[0]][start_test[1]]= 5
+grid[end_test[0]][end_test[1]]= 5
 
 # Draw the grid
 def draw(grid):
@@ -71,6 +73,11 @@ def draw(grid):
                               (MARGIN + HEIGHT) * row + MARGIN,
                               WIDTH,
                               HEIGHT])
+def erase(grid):
+    for row in range(50):
+        for column in range(50):
+            if grid[row][column] != 5:
+                grid[row][column] = 0
 
 class Node:
     def __init__(self,parent = None,position = None):
@@ -171,9 +178,12 @@ while not done:
                 path = aStar(grid,start_test,end_test)
                 for i in path:
                     grid[i[0]][i[1]] = 2
+            if event.key == pygame.K_BACKSPACE:
+                erase(grid)
             if event.key == pygame.K_ESCAPE:
                 pygame.quit()
                 exit()
+
 
         #Drawing with left click
         if pygame.mouse.get_pressed()[0]:
