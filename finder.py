@@ -48,7 +48,7 @@ done = False
 clock = pygame.time.Clock()
 
 start_test = (1,1)
-end_test = (20,20)
+end_test = (45,45)
 
 # Draw the grid
 def draw(grid):
@@ -107,9 +107,9 @@ def aStar(grid,start,end):
 
         for i in open:
             if i.position is not None:
-                if grid[i.position[0]][i.position[1]] == 4:
-                    grid[i.position[0]][i.position[1]] = 5
-                else:
+                # if grid[i.position[0]][i.position[1]] == 4:
+                #     grid[i.position[0]][i.position[1]] = 5
+                # else:
                     grid[i.position[0]][i.position[1]] = 4
 
         for i in closed:
@@ -154,7 +154,7 @@ def aStar(grid,start,end):
 
                     flag = False
                     for open_item in open:
-                        if children[-1] == open_item:
+                        if children[-1].position == open_item.position and children[-1].g >= open_item.g:
                             flag = True
                     if flag == False:
                         open.append(children[-1])
@@ -219,6 +219,7 @@ while not done:
 # Be IDLE friendly. If you forget this line, the program will 'hang'
 # on exit.
 pygame.quit()
+
 
 
 
