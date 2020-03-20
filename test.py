@@ -86,7 +86,8 @@
 #
 # print(aStar(grid,(0,0),(10,15)))
 
-
+start_test = [None,None]
+end_test = [None,None]
 
 from tkinter import *
 
@@ -94,20 +95,64 @@ from tkinter.ttk import *
 
 window = Tk()
 
-window.title("Welcome to LikeGeeks app")
+window.title("Finder Setup")
 
-window.geometry('350x200')
+window.geometry('250x200')
 
-rad1 = Radiobutton(window,text='First', value=1)
+lbl = Label(window, text="Set start point and end point coordinates:")
+lbl.place(x=0,y=15)
 
-rad2 = Radiobutton(window,text='Second', value=2)
+lbl2 = Label(window, text="Start point:")
+lbl2.place(x=0,y=40)
 
-rad3 = Radiobutton(window,text='Third', value=3)
+lbl2x = Label(window, text="x:")
+lbl2x.place(x=80,y=40)
+lbl2y = Label(window, text="y:")
+lbl2y.place(x=130,y=40)
 
-rad1.grid(column=0, row=0)
+x_ = Entry(window,width=3)
+x_.place(x=91,y=40)
 
-rad2.grid(column=1, row=0)
+y_ = Entry(window,width=3)
+y_.place(x=141,y=40)
 
-rad3.grid(column=2, row=0)
+lbl3 = Label(window, text="End point:")
+lbl3.place(x=0,y=70)
+
+lbl3x = Label(window, text="x:")
+lbl3x.place(x=80,y=70)
+
+lbl3y = Label(window, text="y:")
+lbl3y.place(x=130,y=70)
+
+x_1= Entry(window,width=3)
+x_1.place(x=91,y=70)
+
+y_1 = Entry(window,width=3)
+y_1.place(x=141,y=70)
+
+lbl = Label(window, text="Choose algorithm:")
+lbl.place(x=0,y=110)
+
+
+rad1 = Radiobutton(window,text='A* algorithm', value=1)
+rad1.place(x=0,y=130)
+rad2 = Radiobutton(window,text="Dijkstra's algorithm", value=2)
+rad2.place(x=0,y=150)
+
+c = 1
+def clicked():
+    global start_test
+    global end_test
+    start_test[0]=x_.get()
+    start_test[1] = y_.get()
+    end_test[0] = x_1.get()
+    end_test[1] = y_1.get()
+    window.destroy()
+
+btn = Button(window, text="START",command = clicked)
+btn.place(x=150,y=145)
 
 window.mainloop()
+
+print(start_test,end_test)

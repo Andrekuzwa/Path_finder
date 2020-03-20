@@ -1,7 +1,11 @@
 import pygame
 import math
 
+from tkinter import *
+from tkinter.ttk import *
 # Define some colors
+
+
 BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
 GREEN = (0, 255, 0)
@@ -47,10 +51,81 @@ done = False
 # Used to manage how fast the screen updates
 clock = pygame.time.Clock()
 
-start_test = (1,1)
-end_test = (45,45)
+start_test = [1,1]
+end_test = [45,45]
+
+from tkinter import *
+
+from tkinter.ttk import *
+
+window = Tk()
+
+window.title("Finder Setup")
+
+window.geometry('250x200')
+
+lbl = Label(window, text="Set start point and end point coordinates:")
+lbl.place(x=0,y=15)
+
+lbl2 = Label(window, text="Start point:")
+lbl2.place(x=0,y=40)
+
+lbl2x = Label(window, text="x:")
+lbl2x.place(x=80,y=40)
+lbl2y = Label(window, text="y:")
+lbl2y.place(x=130,y=40)
+
+x_ = Entry(window,width=3)
+x_.place(x=91,y=40)
+
+y_ = Entry(window,width=3)
+y_.place(x=141,y=40)
+
+lbl3 = Label(window, text="End point:")
+lbl3.place(x=0,y=70)
+
+lbl3x = Label(window, text="x:")
+lbl3x.place(x=80,y=70)
+
+lbl3y = Label(window, text="y:")
+lbl3y.place(x=130,y=70)
+
+x_1= Entry(window,width=3)
+x_1.place(x=91,y=70)
+
+y_1 = Entry(window,width=3)
+y_1.place(x=141,y=70)
+
+lbl = Label(window, text="Choose algorithm:")
+lbl.place(x=0,y=110)
+
+
+rad1 = Radiobutton(window,text='A* algorithm', value=1)
+rad1.place(x=0,y=130)
+rad2 = Radiobutton(window,text="Dijkstra's algorithm", value=2)
+rad2.place(x=0,y=150)
+
+def clicked():
+    global start_test
+    global end_test
+    start_test[0]= int(x_.get())
+    start_test[1] = int(y_.get())
+    end_test[0] = int(x_1.get())
+    end_test[1] = int(y_1.get())
+    window.destroy()
+
+btn = Button(window, text="START",command = clicked)
+btn.place(x=150,y=145)
+
+window.mainloop()
+
+
 grid[start_test[0]][start_test[1]]= 5
 grid[end_test[0]][end_test[1]]= 5
+
+start_test = tuple(start_test)
+end_test = tuple(end_test)
+
 
 # Draw the grid
 def draw(grid):
@@ -114,17 +189,11 @@ def aStar(grid,start,end):
 
         for i in open:
             if i.position is not None:
-                # if grid[i.position[0]][i.position[1]] == 4:
-                #     grid[i.position[0]][i.position[1]] = 5
-                # else:
-                    grid[i.position[0]][i.position[1]] = 4
+                grid[i.position[0]][i.position[1]] = 4
 
         for i in closed:
             if i.position is not None:
-                # if grid[i.position[0]][i.position[1]] == 3:
-                #     grid[i.position[0]][i.position[1]] = 5
-                # else:
-                    grid[i.position[0]][i.position[1]] = 3
+                grid[i.position[0]][i.position[1]] = 3
 
         current_node = open[0]
         current_index = 0
