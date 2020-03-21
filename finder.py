@@ -237,7 +237,7 @@ class D_Node:
         self.parent = parent
         self.position = position
 
-        self.g = 9999999
+        self.g = 0
 
 def dijskra(grid,start,end):
 
@@ -251,12 +251,27 @@ def dijskra(grid,start,end):
 
     open.append(startNode)
 
-    current_node = open[0]
-    current_index = 0
+
 
     children_vectors = ((-1, 1), (0, 1), (1, 1), (1, 0), (1, -1), (0, -1), (-1, -1), (-1, 0))
 
     while len(open)>0:
+
+        draw(grid)
+        pygame.display.flip()
+        print("OPEN-------->", len(open))
+        print(len(closed))
+
+        for i in open:
+            if i.position is not None and grid[i.position[0]][i.position[1]] != 5:
+                grid[i.position[0]][i.position[1]] = 4
+
+        for i in closed:
+            if i.position is not None and grid[i.position[0]][i.position[1]] != 5:
+                grid[i.position[0]][i.position[1]] = 3
+
+        current_node = open[0]
+        current_index = 0
 
         for index, item in enumerate(open):
             if item.g < current_node.g:
@@ -266,8 +281,33 @@ def dijskra(grid,start,end):
         open.pop(current_index)
         closed.append(current_node)
 
+        if current_node.position == endNode.position:
+            path = []
+            current = current_node
+            while current.parent != None:
+                path.append(current.position)
+                current = current.parent
+            return path[::-1]
+
         children = []
-        for i in children_vectors:
+        for j in children_vectors:
+            if (current_node.position[0] + j[0]) >= 0 and (current_node.position[0] + j[0]) < 50 and (
+                    current_node.position[1] + j[1]) >= 0 and (current_node.position[1] + j[1]) < 50:
+                if grid[current_node.position[0] + j[0]][current_node.position[1] + j[1]] != 1 and D_Node(current_node, (
+                current_node.position[0] + j[0], current_node.position[1] + j[1])) not in closed:
+                    children.append(
+                        D_Node(current_node, (current_node.position[0] + j[0], current_node.position[1] + j[1])))
+                    if (j[0] ** 2 + j[1] ** 2) > 1:
+                        children[-1].g = children[-1].parent.g + math.sqrt(2)
+                    else:
+                        children[-1].g = children[-1].parent.g + 1
+
+                    flag = False
+                    for open_item in open:
+                        if children[-1].position == open_item.position and children[-1].g >= open_item.g:
+                            flag = True
+                    if flag == False:
+                        open.append(children[-1])
 
 
 
@@ -280,7 +320,7 @@ while not done:
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_SPACE:
                 print("POSZLO")
-                path = aStar(grid,start_test,end_test)
+                path = dijskra(grid,start_test,end_test)
                 for i in path:
                     if grid[i[0]][i[1]] != 5:
                         grid[i[0]][i[1]] = 2
