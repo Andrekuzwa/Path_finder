@@ -163,9 +163,6 @@ class Node:
         self.g = 0
         self.h = 0
 
-
-
-
 def aStar(grid,start,end):
 
     open = []
@@ -188,11 +185,11 @@ def aStar(grid,start,end):
         print(len(closed))
 
         for i in open:
-            if i.position is not None:
+            if i.position is not None and grid[i.position[0]][i.position[1]]!=5:
                 grid[i.position[0]][i.position[1]] = 4
 
         for i in closed:
-            if i.position is not None:
+            if i.position is not None and grid[i.position[0]][i.position[1]]!=5:
                 grid[i.position[0]][i.position[1]] = 3
 
         current_node = open[0]
@@ -235,6 +232,45 @@ def aStar(grid,start,end):
                     if flag == False:
                         open.append(children[-1])
 
+class D_Node:
+    def __init__(self,parent = None, position = None):
+        self.parent = parent
+        self.position = position
+
+        self.g = 9999999
+
+def dijskra(grid,start,end):
+
+    open = []
+    closed = []
+
+    startNode = D_Node(None,start)
+    startNode.g = 0
+    endNode = D_Node(None,end)
+    endNode.g = 0
+
+    open.append(startNode)
+
+    current_node = open[0]
+    current_index = 0
+
+    children_vectors = ((-1, 1), (0, 1), (1, 1), (1, 0), (1, -1), (0, -1), (-1, -1), (-1, 0))
+
+    while len(open)>0:
+
+        for index, item in enumerate(open):
+            if item.g < current_node.g:
+                current_node = item
+                current_index = index
+
+        open.pop(current_index)
+        closed.append(current_node)
+
+        children = []
+        for i in children_vectors:
+
+
+
 
 
 while not done:
@@ -246,7 +282,8 @@ while not done:
                 print("POSZLO")
                 path = aStar(grid,start_test,end_test)
                 for i in path:
-                    grid[i[0]][i[1]] = 2
+                    if grid[i[0]][i[1]] != 5:
+                        grid[i[0]][i[1]] = 2
             if event.key == pygame.K_BACKSPACE:
                 erase(grid)
             if event.key == pygame.K_ESCAPE:
