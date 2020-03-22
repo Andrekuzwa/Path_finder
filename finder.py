@@ -45,18 +45,15 @@ screen = pygame.display.set_mode(WINDOW_SIZE)
 # Set title of screen
 pygame.display.set_caption("Finder")
 
-
 # Loop until the user clicks the close button.
 done = False
 
 # Used to manage how fast the screen updates
 clock = pygame.time.Clock()
 
-start_test = [1,1]
-end_test = [45,45]
-
+start_test = [None,None]
+chosen_alg = 1
 from tkinter import *
-
 from tkinter.ttk import *
 def setup():
     window = Tk()
@@ -65,7 +62,7 @@ def setup():
 
     window.geometry('250x200')
 
-    lbl = Label(window, text="Set start point and end point coordinates:")
+    lbl = Label(window, text="Set start point coordinates in range 0-49:")
     lbl.place(x=0,y=15)
 
     lbl2 = Label(window, text="Start point:")
@@ -82,37 +79,24 @@ def setup():
     y_ = Entry(window,width=3)
     y_.place(x=141,y=40)
 
-    lbl3 = Label(window, text="End point:")
-    lbl3.place(x=0,y=70)
-
-    lbl3x = Label(window, text="x:")
-    lbl3x.place(x=80,y=70)
-
-    lbl3y = Label(window, text="y:")
-    lbl3y.place(x=130,y=70)
-
-    x_1= Entry(window,width=3)
-    x_1.place(x=91,y=70)
-
-    y_1 = Entry(window,width=3)
-    y_1.place(x=141,y=70)
 
     lbl = Label(window, text="Choose algorithm:")
-    lbl.place(x=0,y=110)
+    lbl.place(x=0,y=70)
 
+    var = IntVar()
+    def get_alg():
+        global chosen_alg
+        chosen_alg = var.get()
 
-    rad1 = Radiobutton(window,text='A* algorithm', value=1)
-    rad1.place(x=0,y=130)
-    rad2 = Radiobutton(window,text="Dijkstra's algorithm", value=2)
-    rad2.place(x=0,y=150)
+    rad1 = Radiobutton(window, text='A* algorithm', variable=var, value=1, command=get_alg)
+    rad1.place(x=0, y=90)
+    rad2 = Radiobutton(window, text="Dijkstra's algorithm", variable=var, value=2, command=get_alg)
+    rad2.place(x=0, y=110)
 
     def clicked():
         global start_test
-        global end_test
         start_test[0]= int(x_.get())
         start_test[1] = int(y_.get())
-        end_test[0] = int(x_1.get())
-        end_test[1] = int(y_1.get())
         window.destroy()
 
     btn = Button(window, text="START",command = clicked)
@@ -120,15 +104,22 @@ def setup():
 
     window.mainloop()
 
-# setup()
-grid[start_test[0]][start_test[1]]= 5
-# grid[end_test[0]][end_test[1]]= 5
 
+setup()
+if start_test[0] != None and start_test[1] != None:
+    grid[start_test[0]][start_test[1]]= 5
 start_test = tuple(start_test)
-end_test = tuple(end_test)
 
 
 # Draw the grid
+
+def get_end_nodes(grid):
+    end_nodes=[]
+    for row in range(50):
+        for column in range(50):
+            if grid[row][column] == 6:
+                end_nodes.append((row,column))
+    return end_nodes
 def draw(grid):
     for row in range(50):
         for column in range(50):
@@ -151,20 +142,17 @@ def draw(grid):
                               (MARGIN + HEIGHT) * row + MARGIN,
                               WIDTH,
                               HEIGHT])
-def get_end_nodes(grid):
-    end_nodes=[]
-    for row in range(50):
-        for column in range(50):
-            if grid[row][column] == 6:
-                end_nodes.append((row,column))
-    return end_nodes
-
 def erase(grid):
     for row in range(50):
         for column in range(50):
             if grid[row][column] != 5:
                 grid[row][column] = 0
-def clear(grid):
+def erase_full(grid):
+    for row in range(50):
+        for column in range(50):
+            grid[row][column] = 0
+
+def clearRG(grid):
     for row in range(50):
         for column in range(50):
             if grid[row][column] != 5 and grid[row][column] != 6 and grid[row][column] != 1 and grid[row][column] != 2:
@@ -346,20 +334,26 @@ while not done:
             done = True  # Flag that we are done so we exit this loop
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_SPACE:
-                print("POSZLO")
-                # for end_node in get_end_nodes(grid):
-                #     path = aStar(grid,start_test,end_node)
-                #     path_list.append(path)
-                # for each in path_list:
-                #     for i in each:
-                #         if grid[i[0]][i[1]] != 5 and grid[i[0]][i[1]] != 6:
-                #             grid[i[0]][i[1]] = 2
-                # clear(grid)
-                paths = dijskra(grid,start_test,get_end_nodes(grid))
-                for each in paths:
-                    for i in each:
-                        if grid[i[0]][i[1]] != 5 and grid[i[0]][i[1]] != 6:
-                            grid[i[0]][i[1]] = 2
+                if chosen_alg == 1:
+                    for end_node in get_end_nodes(grid):
+                        path = aStar(grid,start_test,end_node)
+                        path_list.append(path)
+                    for each in path_list:
+                        for i in each:
+                            if grid[i[0]][i[1]] != 5 and grid[i[0]][i[1]] != 6:
+                                grid[i[0]][i[1]] = 2
+                    # clearRG(grid)
+                elif chosen_alg == 2:
+                    paths = dijskra(grid,start_test,get_end_nodes(grid))
+                    for each in paths:
+                        for i in each:
+                            if grid[i[0]][i[1]] != 5 and grid[i[0]][i[1]] != 6:
+                                grid[i[0]][i[1]] = 2
+            if event.key == pygame.K_RETURN:
+                # erase_full(grid)
+                # draw(grid)
+                # start_test = list(start_test)
+                # setup()
 
             if event.key == pygame.K_BACKSPACE:
                 erase(grid)
