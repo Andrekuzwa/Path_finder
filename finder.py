@@ -11,7 +11,8 @@ WHITE = (255, 255, 255)
 GREEN = (0, 255, 0)
 RED = (255, 0, 0)
 BLUE = (0,0,255)
-SMTH = (0,200,200)
+START_COLOR = (0,200,200)
+END_COLOR = (255,165,0)
 # This sets the WIDTH and HEIGHT of each grid location
 WIDTH = 12
 HEIGHT = 12
@@ -57,71 +58,71 @@ end_test = [45,45]
 from tkinter import *
 
 from tkinter.ttk import *
+def setup():
+    window = Tk()
 
-window = Tk()
+    window.title("Finder Setup")
 
-window.title("Finder Setup")
+    window.geometry('250x200')
 
-window.geometry('250x200')
+    lbl = Label(window, text="Set start point and end point coordinates:")
+    lbl.place(x=0,y=15)
 
-lbl = Label(window, text="Set start point and end point coordinates:")
-lbl.place(x=0,y=15)
+    lbl2 = Label(window, text="Start point:")
+    lbl2.place(x=0,y=40)
 
-lbl2 = Label(window, text="Start point:")
-lbl2.place(x=0,y=40)
+    lbl2x = Label(window, text="x:")
+    lbl2x.place(x=80,y=40)
+    lbl2y = Label(window, text="y:")
+    lbl2y.place(x=130,y=40)
 
-lbl2x = Label(window, text="x:")
-lbl2x.place(x=80,y=40)
-lbl2y = Label(window, text="y:")
-lbl2y.place(x=130,y=40)
+    x_ = Entry(window,width=3)
+    x_.place(x=91,y=40)
 
-x_ = Entry(window,width=3)
-x_.place(x=91,y=40)
+    y_ = Entry(window,width=3)
+    y_.place(x=141,y=40)
 
-y_ = Entry(window,width=3)
-y_.place(x=141,y=40)
+    lbl3 = Label(window, text="End point:")
+    lbl3.place(x=0,y=70)
 
-lbl3 = Label(window, text="End point:")
-lbl3.place(x=0,y=70)
+    lbl3x = Label(window, text="x:")
+    lbl3x.place(x=80,y=70)
 
-lbl3x = Label(window, text="x:")
-lbl3x.place(x=80,y=70)
+    lbl3y = Label(window, text="y:")
+    lbl3y.place(x=130,y=70)
 
-lbl3y = Label(window, text="y:")
-lbl3y.place(x=130,y=70)
+    x_1= Entry(window,width=3)
+    x_1.place(x=91,y=70)
 
-x_1= Entry(window,width=3)
-x_1.place(x=91,y=70)
+    y_1 = Entry(window,width=3)
+    y_1.place(x=141,y=70)
 
-y_1 = Entry(window,width=3)
-y_1.place(x=141,y=70)
-
-lbl = Label(window, text="Choose algorithm:")
-lbl.place(x=0,y=110)
-
-
-rad1 = Radiobutton(window,text='A* algorithm', value=1)
-rad1.place(x=0,y=130)
-rad2 = Radiobutton(window,text="Dijkstra's algorithm", value=2)
-rad2.place(x=0,y=150)
-
-def clicked():
-    global start_test
-    global end_test
-    start_test[0]= int(x_.get())
-    start_test[1] = int(y_.get())
-    end_test[0] = int(x_1.get())
-    end_test[1] = int(y_1.get())
-    window.destroy()
-
-btn = Button(window, text="START",command = clicked)
-btn.place(x=150,y=145)
-
-window.mainloop()
+    lbl = Label(window, text="Choose algorithm:")
+    lbl.place(x=0,y=110)
 
 
+    rad1 = Radiobutton(window,text='A* algorithm', value=1)
+    rad1.place(x=0,y=130)
+    rad2 = Radiobutton(window,text="Dijkstra's algorithm", value=2)
+    rad2.place(x=0,y=150)
+
+    def clicked():
+        global start_test
+        global end_test
+        start_test[0]= int(x_.get())
+        start_test[1] = int(y_.get())
+        end_test[0] = int(x_1.get())
+        end_test[1] = int(y_1.get())
+        window.destroy()
+
+    btn = Button(window, text="START",command = clicked)
+    btn.place(x=150,y=145)
+
+    window.mainloop()
+
+# setup()
 grid[start_test[0]][start_test[1]]= 5
-grid[end_test[0]][end_test[1]]= 5
+# grid[end_test[0]][end_test[1]]= 5
 
 start_test = tuple(start_test)
 end_test = tuple(end_test)
@@ -141,17 +142,32 @@ def draw(grid):
             elif grid[row][column] == 4:
                 color = GREEN
             elif grid[row][column] == 5:
-                color = SMTH
+                color = START_COLOR
+            elif grid[row][column] == 6:
+                color = END_COLOR
             pygame.draw.rect(screen,
                              color,
                              [(MARGIN + WIDTH) * column + MARGIN,
                               (MARGIN + HEIGHT) * row + MARGIN,
                               WIDTH,
                               HEIGHT])
+def get_end_nodes(grid):
+    end_nodes=[]
+    for row in range(50):
+        for column in range(50):
+            if grid[row][column] == 6:
+                end_nodes.append((row,column))
+    return end_nodes
+
 def erase(grid):
     for row in range(50):
         for column in range(50):
             if grid[row][column] != 5:
+                grid[row][column] = 0
+def clear(grid):
+    for row in range(50):
+        for column in range(50):
+            if grid[row][column] != 5 and grid[row][column] != 6 and grid[row][column] != 1 and grid[row][column] != 2:
                 grid[row][column] = 0
 
 class Node:
@@ -185,11 +201,11 @@ def aStar(grid,start,end):
         print(len(closed))
 
         for i in open:
-            if i.position is not None and grid[i.position[0]][i.position[1]]!=5:
+            if i.position is not None and grid[i.position[0]][i.position[1]]!=5 and grid[i.position[0]][i.position[1]]!=6:
                 grid[i.position[0]][i.position[1]] = 4
 
         for i in closed:
-            if i.position is not None and grid[i.position[0]][i.position[1]]!=5:
+            if i.position is not None and grid[i.position[0]][i.position[1]]!=5 and grid[i.position[0]][i.position[1]]!=6:
                 grid[i.position[0]][i.position[1]] = 3
 
         current_node = open[0]
@@ -239,21 +255,23 @@ class D_Node:
 
         self.g = 0
 
-def dijskra(grid,start,end):
+def dijskra(grid,start,end_positions):
 
     open = []
     closed = []
 
     startNode = D_Node(None,start)
     startNode.g = 0
-    endNode = D_Node(None,end)
-    endNode.g = 0
+    end_nodes = []
+    for position in end_positions:
+        end_nodes.append(D_Node(None,position))
+        end_nodes[-1].g = 0
 
     open.append(startNode)
 
-
-
     children_vectors = ((-1, 1), (0, 1), (1, 1), (1, 0), (1, -1), (0, -1), (-1, -1), (-1, 0))
+
+    path_list = []
 
     while len(open)>0:
 
@@ -263,11 +281,11 @@ def dijskra(grid,start,end):
         print(len(closed))
 
         for i in open:
-            if i.position is not None and grid[i.position[0]][i.position[1]] != 5:
+            if i.position is not None and grid[i.position[0]][i.position[1]] != 5 and grid[i.position[0]][i.position[1]] != 6:
                 grid[i.position[0]][i.position[1]] = 4
 
         for i in closed:
-            if i.position is not None and grid[i.position[0]][i.position[1]] != 5:
+            if i.position is not None and grid[i.position[0]][i.position[1]] != 5 and grid[i.position[0]][i.position[1]] != 6:
                 grid[i.position[0]][i.position[1]] = 3
 
         current_node = open[0]
@@ -281,13 +299,22 @@ def dijskra(grid,start,end):
         open.pop(current_index)
         closed.append(current_node)
 
-        if current_node.position == endNode.position:
+
+
+        if current_node.position in [end_node.position for end_node in end_nodes]:
             path = []
             current = current_node
             while current.parent != None:
                 path.append(current.position)
                 current = current.parent
-            return path[::-1]
+            path_list.append(path[::-1])
+            for index,node in enumerate(end_nodes):
+                if node.position == current_node.position:
+                    end_nodes.pop(index)
+
+        if len(end_nodes) == 0:
+            return path_list
+
 
         children = []
         for j in children_vectors:
@@ -312,7 +339,7 @@ def dijskra(grid,start,end):
 
 
 
-
+path_list = []
 while not done:
     for event in pygame.event.get():  # User did something
         if event.type == pygame.QUIT:  # If user clicked close
@@ -320,10 +347,20 @@ while not done:
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_SPACE:
                 print("POSZLO")
-                path = dijskra(grid,start_test,end_test)
-                for i in path:
-                    if grid[i[0]][i[1]] != 5:
-                        grid[i[0]][i[1]] = 2
+                # for end_node in get_end_nodes(grid):
+                #     path = aStar(grid,start_test,end_node)
+                #     path_list.append(path)
+                # for each in path_list:
+                #     for i in each:
+                #         if grid[i[0]][i[1]] != 5 and grid[i[0]][i[1]] != 6:
+                #             grid[i[0]][i[1]] = 2
+                # clear(grid)
+                paths = dijskra(grid,start_test,get_end_nodes(grid))
+                for each in paths:
+                    for i in each:
+                        if grid[i[0]][i[1]] != 5 and grid[i[0]][i[1]] != 6:
+                            grid[i[0]][i[1]] = 2
+
             if event.key == pygame.K_BACKSPACE:
                 erase(grid)
             if event.key == pygame.K_ESCAPE:
@@ -353,7 +390,7 @@ while not done:
                 column = pos[0] // (WIDTH + MARGIN)
                 row = pos[1] // (HEIGHT + MARGIN)
                 # Set that location to one
-                grid[row][column] = 0
+                grid[row][column] = 6
                 print("Click ", pos, "Grid coordinates: ", row, column)
             except AttributeError:
                 pass
