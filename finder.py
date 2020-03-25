@@ -1,6 +1,10 @@
 import pygame
 import math
 import time
+
+from tkinter import *
+from tkinter.ttk import *
+from tkinter import messagebox
 from tkinter import *
 from tkinter.ttk import *
 # Define some colors
@@ -53,8 +57,7 @@ clock = pygame.time.Clock()
 
 start_test = [None,None]
 chosen_alg = 1
-from tkinter import *
-from tkinter.ttk import *
+
 def setup():
     window = Tk()
 
@@ -361,14 +364,15 @@ while not done:
                 erase_full(grid)
                 start_test = list(start_test)
                 setup()
+                exec_time = None
                 grid[start_test[0]][start_test[1]] = 5
                 print(start_test)
                 print(grid[start_test[0]][start_test[1]])
-
-
-
             if event.key == pygame.K_BACKSPACE:
                 erase(grid)
+                exec_time = None
+            if event.key == pygame.K_p:
+                clearRG(grid)
             if event.key == pygame.K_ESCAPE:
                 pygame.quit()
                 exit()
@@ -387,6 +391,8 @@ while not done:
                 print("Click ", pos, "Grid coordinates: ", row, column)
             except AttributeError:
                 pass
+            except IndexError:
+                print("Out of grid!")
         #Erasing with rightclick
         if pygame.mouse.get_pressed()[2]:
             # User clicks the mouse. Get the position
@@ -400,17 +406,22 @@ while not done:
                 print("Click ", pos, "Grid coordinates: ", row, column)
             except AttributeError:
                 pass
+            except IndexError:
+                print("Out of grid!")
 
 
 
     # Set the screen background
     screen.fill(WHITE)
-    if exec_time != None:
-        font = pygame.font.Font('freesansbold.ttf', 32)
-        text = font.render('Execution time: {}'.format(round(exec_time,2)), True, RED, BLUE)
-        textRect = text.get_rect()
-        textRect.center = (330,675)
-        screen.blit(text, textRect)
+
+    font = pygame.font.Font('freesansbold.ttf', 32)
+    if exec_time == None:
+        text = font.render('Execution time: ', True, BLACK, WHITE)
+    else:
+        text = font.render('Execution time: {}s'.format(round(exec_time, 2)), True, BLACK, WHITE)
+    textRect = text.get_rect()
+    textRect.center = (330,675)
+    screen.blit(text, textRect)
     draw(grid)
 
     # Limit to 60 frames per second
