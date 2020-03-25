@@ -1,6 +1,6 @@
 import pygame
 import math
-
+import time
 from tkinter import *
 from tkinter.ttk import *
 # Define some colors
@@ -39,7 +39,7 @@ pygame.init()
 
 
 # Set the HEIGHT and WIDTH of the screen
-WINDOW_SIZE = [651, 651]
+WINDOW_SIZE = [651, 701]
 screen = pygame.display.set_mode(WINDOW_SIZE)
 
 # Set title of screen
@@ -110,8 +110,6 @@ if start_test[0] != None and start_test[1] != None:
     grid[start_test[0]][start_test[1]]= 5
 start_test = tuple(start_test)
 
-
-# Draw the grid
 
 def get_end_nodes(grid):
     end_nodes=[]
@@ -185,8 +183,8 @@ def aStar(grid,start,end):
 
         draw(grid)
         pygame.display.flip()
-        print("OPEN-------->",len(open))
-        print(len(closed))
+        # print("OPEN-------->",len(open))
+        # print(len(closed))
 
         for i in open:
             if i.position is not None and grid[i.position[0]][i.position[1]]!=5 and grid[i.position[0]][i.position[1]]!=6:
@@ -265,8 +263,8 @@ def dijskra(grid,start,end_positions):
 
         draw(grid)
         pygame.display.flip()
-        print("OPEN-------->", len(open))
-        print(len(closed))
+        # print("OPEN-------->", len(open))
+        # print(len(closed))
 
         for i in open:
             if i.position is not None and grid[i.position[0]][i.position[1]] != 5 and grid[i.position[0]][i.position[1]] != 6:
@@ -327,7 +325,8 @@ def dijskra(grid,start,end_positions):
 
 
 
-path_list = []
+
+exec_time = None
 while not done:
     for event in pygame.event.get():  # User did something
         if event.type == pygame.QUIT:  # If user clicked close
@@ -335,6 +334,8 @@ while not done:
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_SPACE:
                 if chosen_alg == 1:
+                    time_start = time.time()
+                    path_list = []
                     for end_node in get_end_nodes(grid):
                         path = aStar(grid,start_test,end_node)
                         path_list.append(path)
@@ -342,18 +343,29 @@ while not done:
                         for i in each:
                             if grid[i[0]][i[1]] != 5 and grid[i[0]][i[1]] != 6:
                                 grid[i[0]][i[1]] = 2
+                    time_end = time.time()
+                    exec_time = time_end - time_start
+                    print(exec_time)
                     # clearRG(grid)
                 elif chosen_alg == 2:
+                    time_start = time.time()
                     paths = dijskra(grid,start_test,get_end_nodes(grid))
                     for each in paths:
                         for i in each:
                             if grid[i[0]][i[1]] != 5 and grid[i[0]][i[1]] != 6:
                                 grid[i[0]][i[1]] = 2
+                    time_end = time.time()
+                    exec_time = time_end - time_start
+                    print(exec_time)
             if event.key == pygame.K_RETURN:
-                # erase_full(grid)
-                # draw(grid)
-                # start_test = list(start_test)
-                # setup()
+                erase_full(grid)
+                start_test = list(start_test)
+                setup()
+                grid[start_test[0]][start_test[1]] = 5
+                print(start_test)
+                print(grid[start_test[0]][start_test[1]])
+
+
 
             if event.key == pygame.K_BACKSPACE:
                 erase(grid)
@@ -393,8 +405,12 @@ while not done:
 
     # Set the screen background
     screen.fill(WHITE)
-
-
+    if exec_time != None:
+        font = pygame.font.Font('freesansbold.ttf', 32)
+        text = font.render('Execution time: {}'.format(round(exec_time,2)), True, RED, BLUE)
+        textRect = text.get_rect()
+        textRect.center = (330,675)
+        screen.blit(text, textRect)
     draw(grid)
 
     # Limit to 60 frames per second
