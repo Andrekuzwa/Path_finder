@@ -159,6 +159,13 @@ def clearRG(grid):
             if grid[row][column] != 5 and grid[row][column] != 6 and grid[row][column] != 1 and grid[row][column] != 2:
                 grid[row][column] = 0
 
+def switch_clear(grid):
+    for row in range(50):
+        for column in range(50):
+            if grid[row][column] != 5 and grid[row][column] != 6 and grid[row][column] != 1:
+                grid[row][column] = 0
+
+
 class Node:
     def __init__(self,parent = None,position = None):
         self.parent = parent
@@ -371,6 +378,13 @@ while not done:
             if event.key == pygame.K_BACKSPACE:
                 erase(grid)
                 exec_time = None
+            if event.key == pygame.K_s:
+                switch_clear(grid)
+                exec_time = None
+                if chosen_alg == 1:
+                    chosen_alg = 2
+                else:
+                    chosen_alg = 1
             if event.key == pygame.K_p:
                 clearRG(grid)
             if event.key == pygame.K_ESCAPE:
@@ -416,9 +430,15 @@ while not done:
 
     font = pygame.font.Font('freesansbold.ttf', 32)
     if exec_time == None:
-        text = font.render('Execution time: ', True, BLACK, WHITE)
+        if chosen_alg == 1:
+            text = font.render('A* - Execution time: ', True, BLACK, WHITE)
+        else:
+            text = font.render('Dijskra - Execution time: ', True, BLACK, WHITE)
     else:
-        text = font.render('Execution time: {}s'.format(round(exec_time, 2)), True, BLACK, WHITE)
+        if chosen_alg == 1:
+            text = font.render('A* - Execution time: {}s'.format(round(exec_time, 2)), True, BLACK, WHITE)
+        else:
+            text = font.render('Dijskra - Execution time: {}s'.format(round(exec_time, 2)), True, BLACK, WHITE)
     textRect = text.get_rect()
     textRect.center = (330,675)
     screen.blit(text, textRect)
