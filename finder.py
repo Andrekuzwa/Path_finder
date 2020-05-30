@@ -7,7 +7,6 @@ from tkinter.ttk import *
 from tkinter import messagebox
 from tkinter import *
 from tkinter.ttk import *
-# Define some colors
 
 
 BLACK = (0, 0, 0)
@@ -17,42 +16,27 @@ RED = (255, 0, 0)
 BLUE = (0,0,255)
 START_COLOR = (0,200,200)
 END_COLOR = (255,165,0)
-# This sets the WIDTH and HEIGHT of each grid location
+
 WIDTH = 12
 HEIGHT = 12
 
-# This sets the margin between each cell
 MARGIN = 1
 
-# Create a 2 dimensional array. A two dimensional
-# array is simply a list of lists.
 grid = []
 for row in range(50):
-    # Add an empty array that will hold each cell
-    # in this row
     grid.append([])
     for column in range(50):
-        grid[row].append(0)  # Append a cell
+        grid[row].append(0)
 
-# for i in [(1, 1), (2, 2), (3, 3), (4, 4), (5, 5), (6, 6), (6, 7), (7, 8), (7, 9), (8, 10), (8, 11), (9, 12), (9, 13), (9, 14), (10, 15)]:
-#     grid[i[0]][i[1]] = 1
-
-
-# Initialize pygame
 pygame.init()
 
-
-# Set the HEIGHT and WIDTH of the screen
 WINDOW_SIZE = [651, 701]
 screen = pygame.display.set_mode(WINDOW_SIZE)
 
-# Set title of screen
 pygame.display.set_caption("Finder")
 
-# Loop until the user clicks the close button.
 done = False
 
-# Used to manage how fast the screen updates
 clock = pygame.time.Clock()
 
 start_test = [None,None]
@@ -193,8 +177,6 @@ def aStar(grid,start,end):
 
         draw(grid)
         pygame.display.flip()
-        # print("OPEN-------->",len(open))
-        # print(len(closed))
 
         for i in open:
             if i.position is not None and grid[i.position[0]][i.position[1]]!=5 and grid[i.position[0]][i.position[1]]!=6:
@@ -207,13 +189,12 @@ def aStar(grid,start,end):
         current_node = open[0]
         current_index = 0
 
-        #finding node with best f value
         for index,item in enumerate(open):
             if item.f < current_node.f:
                 current_node = item
                 current_index = index
 
-        #remove best node from open and add to closed list
+
         open.pop(current_index)
         closed.append(current_node)
 
@@ -273,8 +254,6 @@ def dijskra(grid,start,end_positions):
 
         draw(grid)
         pygame.display.flip()
-        # print("OPEN-------->", len(open))
-        # print(len(closed))
 
         for i in open:
             if i.position is not None and grid[i.position[0]][i.position[1]] != 5 and grid[i.position[0]][i.position[1]] != 6:
@@ -338,9 +317,9 @@ def dijskra(grid,start,end_positions):
 
 exec_time = None
 while not done:
-    for event in pygame.event.get():  # User did something
-        if event.type == pygame.QUIT:  # If user clicked close
-            done = True  # Flag that we are done so we exit this loop
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            done = True
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_SPACE:
                 if chosen_alg == 1:
@@ -356,7 +335,6 @@ while not done:
                     time_end = time.time()
                     exec_time = time_end - time_start
                     print(exec_time)
-                    # clearRG(grid)
                 elif chosen_alg == 2:
                     time_start = time.time()
                     paths = dijskra(grid,start_test,get_end_nodes(grid))
@@ -392,40 +370,28 @@ while not done:
                 exit()
 
 
-        #Drawing with left click
         if pygame.mouse.get_pressed()[0]:
-            # User clicks the mouse. Get the position
             try:
                 pos = event.pos
-                # Change the x/y screen coordinates to grid coordinates pjyf
                 column = pos[0] // (WIDTH + MARGIN)
                 row = pos[1] // (HEIGHT + MARGIN)
-                # Set that location to one
                 grid[row][column] = 1
-                print("Click ", pos, "Grid coordinates: ", row, column)
             except AttributeError:
                 pass
             except IndexError:
                 print("Out of grid!")
-        #Erasing with rightclick
         if pygame.mouse.get_pressed()[2]:
-            # User clicks the mouse. Get the position
             try:
                 pos = event.pos
-                # Change the x/y screen coordinates to grid coordinates
                 column = pos[0] // (WIDTH + MARGIN)
                 row = pos[1] // (HEIGHT + MARGIN)
-                # Set that location to one
                 grid[row][column] = 6
-                print("Click ", pos, "Grid coordinates: ", row, column)
             except AttributeError:
                 pass
             except IndexError:
                 print("Out of grid!")
 
 
-
-    # Set the screen background
     screen.fill(WHITE)
 
     font = pygame.font.Font('freesansbold.ttf', 32)
@@ -444,14 +410,11 @@ while not done:
     screen.blit(text, textRect)
     draw(grid)
 
-    # Limit to 60 frames per second
+
     clock.tick(60)
 
-    # Go ahead and update the screen with what we've drawn.
     pygame.display.flip()
 
-# Be IDLE friendly. If you forget this line, the program will 'hang'
-# on exit.
 pygame.quit()
 
 
